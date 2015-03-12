@@ -38,6 +38,10 @@ svg {
 	opacity: 0.95;
 }
 
+.clock {
+	max-width: 100%;
+}
+
 #clock-hands {
 	z-index: 20;
 }
