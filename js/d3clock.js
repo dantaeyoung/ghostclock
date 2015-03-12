@@ -41,7 +41,9 @@ var d3clockfunc = function(scope, elem, attrs) {
 	}
 
 	function success(position) {
-		getTransitTime(position.coords.latitude, position.coords.longitude);
+		window.positionLat = position.coords.latitude;
+		window.positionLong = position.coords.longitude;
+		setInterval(getTransitTime(window.positionLat, window.positionLong), 300000); //updates every 5 min
 	}
 
 	function fail() {
@@ -61,12 +63,15 @@ var d3clockfunc = function(scope, elem, attrs) {
 			if (status == google.maps.DirectionsStatus.OK) {
 				console.log(response);
 
-				$(".info").fadeTo(1000, 1).delay(2000).fadeTo(2000, 0.1);
-				$(".info").hover(function() {
-					$(".info").finish().fadeTo(400, 1);
-				}, function() {
-					$(".info").finish().fadeTo(400, 0.1);
-				});
+				if(window.firstQuery === undefined) {
+					window.firstQuery = -1;
+					$(".info").fadeTo(1000, 1).delay(2000).fadeTo(2000, 0.1);
+					$(".info").hover(function() {
+						$(".info").finish().fadeTo(400, 1);
+					}, function() {
+						$(".info").finish().fadeTo(400, 0.1);
+					});
+				}
 
 				if(arrival_time in response.routes[0].legs[0]) {
 					var arrival_time = response.routes[0].legs[0].arrival_time.value;
@@ -79,16 +84,17 @@ var d3clockfunc = function(scope, elem, attrs) {
 				window.transitHandData[1].value = arrival_time.getMinutes() + (arrival_time.getSeconds() / 60.0);
 				window.transitHandData[2].value = arrival_time.getSeconds();
 				console.log(window.transitHandData);
-	/*			$("#arrival_time").html(response.routes[0].legs[0].arrival_time.text);
-				$("#arrival_time_detail").html(response.routes[0].legs[0].arrival_time.value);
-				_.each(response.routes[0].legs[0].steps, function(d) {
-					$("<div>").html(d.instructions).appendTo("#steps");
-				}); */
 
-				var transitHands = d3.select("#transit-hands");
+				var transitHandsDiv = d3.select("#transit-hands");
+				var transitHands = transitHandsDiv.selectAll('path.transitHand').data(window.transitHandData);
 
-				transitHands.selectAll('path')
-					.data(window.transitHandData)
+				transitHands
+					.transition().duration(2000)
+					.attr('transform',function(d){
+						return 'rotate(' + ((d.scale(d.value)) % 360) + ')';
+					});
+
+				transitHands
 					.enter()
 					.append('path')
 					.attr('class', function(d){
@@ -104,13 +110,15 @@ var d3clockfunc = function(scope, elem, attrs) {
 					.attr("stroke-opacity", 0)
 					.transition().duration(2000)
 					.attr("fill-opacity", 1)
-					.attr("stroke-opacity", 1);
+					.attr("stroke-opacity", 1) 
+
 			} else {
 				$(".info").html("ERROR: " + status);
 				$(".info").fadeTo(100, 1);
 			}
 		});
 	}
+	window.getTransitTime = getTransitTime;
 
 
 
