@@ -8,7 +8,7 @@ ion-content {
 		background: linear-gradient(70deg, #ebebeb 0%, #fcfcfc 33.3%, #efeeee 100%) #fff !important;
 	
 }
-.d3clock-wrapper {
+.flex-container {
 	height:100vh;
 	display: flex;
 	align-items: center;
@@ -90,4 +90,23 @@ svg {
 }
 
 
+.address-form {
+	display: none;
+}
+
+.address-form .textinput {
+	border-color: #cccccc;
+	font-size: 21px;
+	text-align: left;
+	border-style: dotted;
+	border-width: 2px;
+	border-radius: 5px;
+	padding: 10px;
+	margin-bottom: 10px;
+	display: inline-block;
+}
+
+.address-form .submit {
+	display: inline-block;
+}
 

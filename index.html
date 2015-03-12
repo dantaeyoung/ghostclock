@@ -21,6 +21,9 @@
     <!-- d3 js -->
     <script src="lib/d3.v3.min.js"></script>
 
+    <!-- jquery -->
+    <script src="lib/jquery-1.11.2.min.js"></script>
+
     <!-- cordova script (this will be a 404 during development) -->
     <script src="cordova.js"></script>
 
@@ -36,9 +39,19 @@
       <!--<ion-header-bar class="bar-stable">
         <h1 class="title">undecimalclock</h1>
 		</ion-header-bar> -->
-	  <ion-content scroll="false">
-		  <div class="d3clock-wrapper" create-clock></div>
-      </ion-content>
+	<ion-content scroll="false">
+		<div class="flex-container">
+			<div class="d3clock-wrapper" create-clock>
+			</div>
+			<div class="address-form">
+				<form action="/" method="GET">
+				<h3>Ghostclock Destination:</h3>
+				<input class="textinput" type="text" name="destination">
+				<input class="submit" type="submit" value="Submit">
+				</form>
+			</div>
+		</div>
+	</ion-content>
     </ion-pane>
   </body>
 </html>

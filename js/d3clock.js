@@ -1,86 +1,98 @@
-var getUrlValue = function(VarSearch){
-	var SearchString = window.location.search.substring(1);
-	var VariableArray = SearchString.split('&');
-	for(var i = 0; i < VariableArray.length; i++){
-		var KeyValuePair = VariableArray[i].split('=');
-		if(KeyValuePair[0] === VarSearch){
-			return KeyValuePair[1];
-		}
-	}
-}
-
-
-function initGeolocation() {
-	if(!(getUrlValue('destination') === undefined)) {
-		window.destination = getUrlValue('destination');
-		if( navigator.geolocation ) {
-			// Call getCurrentPosition with success and failure callbacks
-			navigator.geolocation.getCurrentPosition( success, fail );
-		}
-		else {
-			alert("Sorry, your browser does not support geolocation services.");
-		}
-	} else {
-		alert("Sorry, no location entered!");
-	}
-}
-
-function success(position) {
-	getTransitTime(position.coords.latitude, position.coords.longitude);
-}
-
-function fail() {
-	// Could not obtain location
-}
-
-function getTransitTime(lat, lon) {
-	var directionsService = new google.maps.DirectionsService();
-	var request = {
-		origin: lat + "," + lon,
-		destination: '40.696319,-73.960623',
-		travelMode: google.maps.DirectionsTravelMode.TRANSIT
-	};
-	directionsService.route(request, function(response, status) {
-		console.log (lat + "," + lon);
-
-		if (status == google.maps.DirectionsStatus.OK) {
-			console.log(response);
-			if(arrival_time in response.routes[0].legs[0]) {
-				var arrival_time = response.routes[0].legs[0].arrival_time.value;
-			} else {
-				var arrival_time = new Date();
-				arrival_time.setSeconds(arrival_time.getSeconds() + response.routes[0].legs[0].duration.value); 
-			}
-			window.transitHandData[0].value = arrival_time.getHours() % 12 + (arrival_time.getMinutes() / 60.0);
-			window.transitHandData[1].value = arrival_time.getMinutes() + (arrival_time.getSeconds() / 60.0);
-			window.transitHandData[2].value = arrival_time.getSeconds();
-			console.log(window.transitHandData);
-/*			$("#arrival_time").html(response.routes[0].legs[0].arrival_time.text);
-			$("#arrival_time_detail").html(response.routes[0].legs[0].arrival_time.value);
-			_.each(response.routes[0].legs[0].steps, function(d) {
-				$("<div>").html(d.instructions).appendTo("#steps");
-			}); */
-
-			var transitHands = d3.select("#transit-hands");
-
-			transitHands.selectAll('path')
-				.data(window.transitHandData)
-				.enter()
-				.append('path')
-				.attr('class', function(d){
-					return d.type + '-transitHand transitHand';
-				})
-				.attr('d', function(d) {
-					return "M" + (d.width / 2.0) + " " + d.balance + " L" + (d.width / -2.0) + " " + d.balance + " L0 " + d.length + " Z"
-				})
-				.attr('transform',function(d){
-					return 'rotate(' + ((d.scale(d.value)) % 360) + ')';
-				});
-		}
-	});
-}
-
 var d3clockfunc = function(scope, elem, attrs) {
+
+	function getUrlValue (VarSearch){
+		var SearchString = window.location.search.substring(1);
+		var VariableArray = SearchString.split('&');
+		for(var i = 0; i < VariableArray.length; i++){
+			var KeyValuePair = VariableArray[i].split('=');
+			if(KeyValuePair[0] === VarSearch){
+				return KeyValuePair[1];
+			}
+		}
+	}
+
+
+	function initGeolocation() {
+
+		if(!(getUrlValue('destination') === undefined)) {
+
+			drawClock();
+
+			window.destination = getUrlValue('destination');
+			if( navigator.geolocation ) {
+				// Call getCurrentPosition with success and failure callbacks
+				navigator.geolocation.getCurrentPosition( success, fail );
+			}
+			else {
+				alert("Sorry, your browser does not support geolocation services.");
+			}
+
+		} else {
+	//		var replaced = str.replace(/ /g, '+');
+
+			$("svg").hide();
+			$(".address-form").show();
+
+
+			alert("Sorry, no location entered!");
+		}
+	}
+
+	function success(position) {
+		getTransitTime(position.coords.latitude, position.coords.longitude);
+	}
+
+	function fail() {
+		// Could not obtain location
+	}
+
+	function getTransitTime(lat, lon) {
+		var directionsService = new google.maps.DirectionsService();
+		var request = {
+			origin: lat + "," + lon,
+			destination: window.destination,
+			travelMode: google.maps.DirectionsTravelMode.TRANSIT
+		};
+		directionsService.route(request, function(response, status) {
+			console.log (lat + "," + lon);
+
+			if (status == google.maps.DirectionsStatus.OK) {
+				console.log(response);
+				if(arrival_time in response.routes[0].legs[0]) {
+					var arrival_time = response.routes[0].legs[0].arrival_time.value;
+				} else {
+					var arrival_time = new Date();
+					arrival_time.setSeconds(arrival_time.getSeconds() + response.routes[0].legs[0].duration.value); 
+				}
+				window.transitHandData[0].value = arrival_time.getHours() % 12 + (arrival_time.getMinutes() / 60.0);
+				window.transitHandData[1].value = arrival_time.getMinutes() + (arrival_time.getSeconds() / 60.0);
+				window.transitHandData[2].value = arrival_time.getSeconds();
+				console.log(window.transitHandData);
+	/*			$("#arrival_time").html(response.routes[0].legs[0].arrival_time.text);
+				$("#arrival_time_detail").html(response.routes[0].legs[0].arrival_time.value);
+				_.each(response.routes[0].legs[0].steps, function(d) {
+					$("<div>").html(d.instructions).appendTo("#steps");
+				}); */
+
+				var transitHands = d3.select("#transit-hands");
+
+				transitHands.selectAll('path')
+					.data(window.transitHandData)
+					.enter()
+					.append('path')
+					.attr('class', function(d){
+						return d.type + '-transitHand transitHand';
+					})
+					.attr('d', function(d) {
+						return "M" + (d.width / 2.0) + " " + d.balance + " L" + (d.width / -2.0) + " " + d.balance + " L0 " + d.length + " Z"
+					})
+					.attr('transform',function(d){
+						return 'rotate(' + ((d.scale(d.value)) % 360) + ')';
+					});
+			}
+		});
+	}
+
 
 
 	var radians = 0.0174532925, 
@@ -295,7 +307,6 @@ var d3clockfunc = function(scope, elem, attrs) {
 
 	}
 
-	drawClock();
 	initGeolocation();
 
 	setInterval(function(){
