@@ -11,6 +11,7 @@ ion-content {
 .flex-container {
 	height:100vh;
 	display: flex;
+	flex-direction: column;
 	align-items: center;
 	justify-content: center;
 }
@@ -95,8 +96,9 @@ svg {
 }
 
 .address-form .textinput {
+	width: 500px;
 	border-color: #cccccc;
-	font-size: 21px;
+	font-size: 16px;
 	text-align: left;
 	border-style: dotted;
 	border-width: 2px;
@@ -107,6 +109,20 @@ svg {
 }
 
 .address-form .submit {
-	display: inline-block;
+	display: block;
 }
 
+.info {
+	font-family: 'Montserrat', sans-serif;
+	font-weight: bold;
+	text-align: center;
+	font-size: 1.0em;
+	opacity: 0;
+}
+
+.current-time {
+	color: #666;
+}
+.destination-name {
+	color: #DF8087;
+}

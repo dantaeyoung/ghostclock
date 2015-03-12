@@ -11,14 +11,17 @@ var d3clockfunc = function(scope, elem, attrs) {
 		}
 	}
 
-
 	function initGeolocation() {
 
 		if(!(getUrlValue('destination') === undefined)) {
 
+			window.destination = getUrlValue('destination');
+
 			drawClock();
 
-			window.destination = getUrlValue('destination');
+			$(".destination-name").html("TRANSIT TIME TO " + decodeURIComponent(window.destination).replace(/\+/g, ' ').toUpperCase());
+
+
 			if( navigator.geolocation ) {
 				// Call getCurrentPosition with success and failure callbacks
 				navigator.geolocation.getCurrentPosition( success, fail );
@@ -31,6 +34,7 @@ var d3clockfunc = function(scope, elem, attrs) {
 	//		var replaced = str.replace(/ /g, '+');
 
 			$("svg").hide();
+			$(".info").hide();
 			$(".address-form").show();
 
 		}
@@ -56,12 +60,21 @@ var d3clockfunc = function(scope, elem, attrs) {
 
 			if (status == google.maps.DirectionsStatus.OK) {
 				console.log(response);
+
+				$(".info").fadeTo(1000, 1).delay(2000).fadeTo(2000, 0.1);
+				$(".info").hover(function() {
+					$(".info").finish().fadeTo(400, 1);
+				}, function() {
+					$(".info").finish().fadeTo(400, 0.1);
+				});
+
 				if(arrival_time in response.routes[0].legs[0]) {
 					var arrival_time = response.routes[0].legs[0].arrival_time.value;
 				} else {
 					var arrival_time = new Date();
 					arrival_time.setSeconds(arrival_time.getSeconds() + response.routes[0].legs[0].duration.value); 
 				}
+
 				window.transitHandData[0].value = arrival_time.getHours() % 12 + (arrival_time.getMinutes() / 60.0);
 				window.transitHandData[1].value = arrival_time.getMinutes() + (arrival_time.getSeconds() / 60.0);
 				window.transitHandData[2].value = arrival_time.getSeconds();
@@ -86,7 +99,15 @@ var d3clockfunc = function(scope, elem, attrs) {
 					})
 					.attr('transform',function(d){
 						return 'rotate(' + ((d.scale(d.value)) % 360) + ')';
-					});
+					})
+					.attr("fill-opacity", 0)
+					.attr("stroke-opacity", 0)
+					.transition().duration(2000)
+					.attr("fill-opacity", 1)
+					.attr("stroke-opacity", 1);
+			} else {
+				$(".info").html("ERROR: " + status);
+				$(".info").fadeTo(100, 1);
 			}
 		});
 	}
@@ -95,7 +116,7 @@ var d3clockfunc = function(scope, elem, attrs) {
 
 	var radians = 0.0174532925, 
 		clockRadius = 200,
-		margin = 50,
+		margin = 20,
 		width = (clockRadius+margin)*2,
 		height = (clockRadius+margin)*2,
 		hourHandLength = 2*clockRadius/4,
