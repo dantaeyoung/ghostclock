@@ -2,7 +2,9 @@
 
 Ghostclock - concept by Eivind Karlsen, execution by Dan Taeyoung
 
-Ghostclock does one thing: creates a clock that displays the time, and the time it takes you to go home.
+Ghostclock does one thing: creates a clock that displays the time, and the time it takes you to go home. 
+
+Uses the Google Maps Direction API, d3.js, and the Ionic framework. Refreshes every 5 minutes.
 
 Example:
 
