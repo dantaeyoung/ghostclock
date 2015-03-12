@@ -28,7 +28,7 @@ angular.module('Watch', ['ionic'])
 .directive("createClock", function($window) {
 	return {
 		restrict: "EA",
-		template: "<svg class='clock1' width='400' height='400'></svg><svg class='clock2' width='400' height='400'></svg>",
+		template: "<svg class='clock1' width='400' height='400'></svg>",
 		link: d3clockfunc
 	};
 })

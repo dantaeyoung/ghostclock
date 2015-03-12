@@ -21,7 +21,7 @@ function initGeolocation()
 
 
 function getTransitTime(lat, lon) {
-	window.destAddress='808 West End Ave, New York'
+	window.destAddress='40.696319,-73.960623'
 
 	var directionsService = new google.maps.DirectionsService();
      var request = {
@@ -33,7 +33,7 @@ function getTransitTime(lat, lon) {
        if (status == google.maps.DirectionsStatus.OK) {
 			console.log(response);
 var arrival_time = response.routes[0].legs[0].arrival_time.value;
-			window.transitHandData[0].value = arrival_time.getHours() % 12;
+			window.transitHandData[0].value = arrival_time.getHours() % 12 + (arrival_time.getMinutes() / 60);
 			window.transitHandData[1].value = arrival_time.getMinutes();
 			window.transitHandData[2].value = arrival_time.getSeconds();
 			console.log(window.transitHandData);
@@ -128,16 +128,16 @@ var d3clockfunc = function(scope, elem, attrs) {
 		*/
 
 	var hourScale = d3.scale.linear()
-		.domain([0,11]) // from 0 to numhours - 1
-		.range([0,360 - (360 / 11)]); // from 0 to 360 - (360 / numhours)
+		.domain([0,12]) // from 0 to numhours - 1
+		.range([0,360]); // from 0 to 360 - (360 / numhours)
 
 	var minuteScale = d3.scale.linear()
-		.domain([0,59])
-		.range([0,360 - (360 / 7854.5455)]);
+		.domain([0,60])
+		.range([0,360]);
 
 	var secondScale = d3.scale.linear()
-		.domain([0,59])
-		.range([0,360 - (360 / 66156.2021)]);
+		.domain([0,60])
+		.range([0,360])
 
 	var handData = [
 		{
@@ -209,7 +209,7 @@ var d3clockfunc = function(scope, elem, attrs) {
 
 		//add marks for seconds
 		face.selectAll('.second-tick')
-			.data(d3.range(0, 59)).enter()
+			.data(d3.range(0, 60)).enter()
 				.append('line')
 				.attr('class', 'second-tick')
 				.attr('x1',0)
@@ -221,26 +221,10 @@ var d3clockfunc = function(scope, elem, attrs) {
 					return 'rotate(' + ((secondScale(d / 1.0)) % 360) + ')';
 				});
 		//and labels
-/*
-		face.selectAll('.second-label')
-			.data(d3.range(5,61,5))
-				.enter()
-				.append('text')
-				.attr('class', 'second-label')
-				.attr('text-anchor','middle')
-				.attr('x',function(d){
-					return secondLabelRadius*Math.sin(secondScale(d)*radians);
-				})
-				.attr('y',function(d){
-					return -secondLabelRadius*Math.cos(secondScale(d)*radians) + secondLabelYOffset;
-				})
-				.text(function(d){
-					return d;
-				});
-*/
+		//
 		//... and hours
-/*		face.selectAll('.hour-tick')
-			.data(d3.range(0,23)).enter()
+		face.selectAll('.hour-tick')
+			.data(d3.range(0,11)).enter()
 				.append('line')
 				.attr('class', 'hour-tick')
 				.attr('x1',0)
@@ -248,9 +232,9 @@ var d3clockfunc = function(scope, elem, attrs) {
 				.attr('y1',hourTickStart)
 				.attr('y2',hourTickStart + hourTickLength)
 				.attr('transform',function(d){
-					return 'rotate(' + hourScale(d * 2) + ')';
+					return 'rotate(' + hourScale(d) + ')';
 				});
-*/
+
 		face.selectAll('.hour-label')
 			.data(d3.range(0,12))
 				.enter()
@@ -264,7 +248,7 @@ var d3clockfunc = function(scope, elem, attrs) {
 					return -hourLabelRadius*Math.cos(hourScale(d)*radians + Math.PI) + hourLabelYOffset;
 				})
 				.text(function(d){
-					return (d + 5) % 12 + 1;
+					return (d + 6) % 12 ;
 				});
 
 
