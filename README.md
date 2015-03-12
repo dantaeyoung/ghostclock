@@ -6,9 +6,9 @@ Ghostclock does one thing: creates a clock that displays the time, and the time 
 
 Example:
 
-[http://provolot.github.io/ghostclock/?destination=1000+5th+Avenue%2C+New+York%2C+NY+]
+http://provolot.github.io/ghostclock/?destination=1000+5th+Avenue%2C+New+York%2C+NY+
 
-[http://provolot.github.io/ghostclock/]
+http://provolot.github.io/ghostclock/
 
 
 
