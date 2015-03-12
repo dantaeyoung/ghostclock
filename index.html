@@ -43,8 +43,10 @@ CUSTOMIZE BELOW
 
  function success(position)
  {
-	 $("#long").html(position.coords.longitude);
-	 $('#lat').html(position.coords.latitude);
+	$('#lat').html(position.coords.latitude);
+	$("#long").html(position.coords.longitude);
+
+	getTransitTime(position.coords.latitude, position.coords.longitude);
 
  }
 
@@ -54,41 +56,32 @@ CUSTOMIZE BELOW
  }
 
 
-function getTransitTime() {
+function getTransitTime(lat, lon) {
 
 	var directionsService = new google.maps.DirectionsService();
      var request = {
        origin: '40.7551582,-73.9410288999999',
-       destination: '808 West End Ave, New York',
+       destination: window.destAddress,
        travelMode: google.maps.DirectionsTravelMode.TRANSIT
      };
      directionsService.route(request, function(response, status) {
        if (status == google.maps.DirectionsStatus.OK) {
 			console.log(response);
-			console.log(response.routes[0].legs[0].arrival_time.text);
+//console.log(response.routes[0].legs[0].arrival_time);
+			$("#arrival_time").html(response.routes[0].legs[0].arrival_time.text);
+			$("#arrival_time_detail").html(response.routes[0].legs[0].arrival_time.value);
+			_.each(response.routes[0].legs[0].steps, function(d) {
+				$("<div>").html(d.instructions).appendTo("#steps");
+			});
        }
      });
-/*
-//var ajaxURL = string.Format("http://maps.google.com/maps/geo?q={0}&output=xml", encodedPostCode);
-var ajaxURL =  "https://maps.googleapis.com/maps/api/directions/json?origin=40.7551582,-73.94102889999999&destination=808+West+End+Ave,+New+York+NY&mode=transit&sensor=false&serverkey=AIzaSyDuRMCLHjebHl6h4ZQ1b4IzEv_v6W89a4M"
-
-$.ajax({
-	url: ajaxURL,
-    jsonp: "callback",
-    dataType: "jsonp",
-    success: function( response ) {
-        console.log( response ); // server response
-    }
-});
-	$.getJSON("https://maps.googleapis.com/maps/api/directions/json?origin=40.7551582,-73.94102889999999&destination=808+West+End+Ave,+New+York+NY&mode=transit&sensor=false&serverkey=AIzaSyDuRMCLHjebHl6h4ZQ1b4IzEv_v6W89a4M", function(data) {
-		console.log(data);
-	}); */
 }
 
 
 $(document).ready(function() {
-	getTransitTime();
-//	initGeolocation();
+	window.destAddress='808 West End Ave, New York'
+	initGeolocation();
+
 });
 
 </script>
@@ -101,8 +94,13 @@ $(document).ready(function() {
 <body>
 <div class="flexcontainer">
 	<div class="centerdiv">
+		To get to Eivind's Home from:
 		<div id="lat"></div>
 		<div id="long"></div>
+		I will get there at
+		<div id="arrival_time"></div>
+		<div id="arrival_time_detail"></div>
+		<div id="steps"></div>
 	</div>
 </div>
 </body>
