@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/3.4.0/lodash.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prefixfree/1.0.7/prefixfree.min.js"></script>
+<style type="text/css">
+body {
+	margin: 0px;
+	padding: 0px;
+	height: 100%;
+}
+.flexcontainer {
+	height:100vh;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+</style>
+
+<!-- 
+///////////////
+CUSTOMIZE BELOW
+///////////////
+ -->
+
+<title>TITLE</title>
+
+<script>
+ function initGeolocation()
+ {
+	if( navigator.geolocation ) {
+		// Call getCurrentPosition with success and failure callbacks
+		navigator.geolocation.getCurrentPosition( success, fail );
+	}
+	else {
+		alert("Sorry, your browser does not support geolocation services.");
+	}
+ }
+
+ function success(position)
+ {
+	 $("#long").html(position.coords.longitude);
+	 $('#lat').html(position.coords.latitude);
+
+ }
+
+ function fail()
+ {
+	// Could not obtain location
+ }
+
+
+function getTransitTime() {
+$.ajax({
+	url: "https://maps.googleapis.com/maps/api/directions/json?origin=40.7551582,-73.94102889999999&destination=808+West+End+Ave,+New+York+NY&mode=transit&sensor=false&serverkey=AIzaSyDuRMCLHjebHl6h4ZQ1b4IzEv_v6W89a4M", 
+    jsonp: "callback",
+    dataType: "jsonp",
+    success: function( response ) {
+        console.log( response ); // server response
+    }
+});
+/*	$.getJSON("https://maps.googleapis.com/maps/api/directions/json?origin=40.7551582,-73.94102889999999&destination=808+West+End+Ave,+New+York+NY&mode=transit&sensor=false&serverkey=AIzaSyDuRMCLHjebHl6h4ZQ1b4IzEv_v6W89a4M", function(data) {
+		console.log(data);
+	}); */
+}
+
+
+$(document).ready(function() {
+	getTransitTime();
+//	initGeolocation();
+});
+
+</script>
+
+<style type="text/css">
+.centerdiv {
+}
+</style>
+</head>
+<body>
+<div class="flexcontainer">
+	<div class="centerdiv">
+		<div id="lat"></div>
+		<div id="long"></div>
+	</div>
+</div>
+</body>
+</html>
+
+
+
+
