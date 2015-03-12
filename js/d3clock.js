@@ -33,8 +33,6 @@ var d3clockfunc = function(scope, elem, attrs) {
 			$("svg").hide();
 			$(".address-form").show();
 
-
-			alert("Sorry, no location entered!");
 		}
 	}
 
